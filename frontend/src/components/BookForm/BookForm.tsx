@@ -2,8 +2,10 @@ import { useState } from "react";
 import { IconButton, Typography, Grid, Box } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import InfoIcon from '@mui/icons-material/Info';
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteModal from "../UI/DeleteModal/DeleteModal";
 import BookDetailsModal from "../UI/BookDetailsModal/BookDetailsModal";
+import EditBookModal from "../UI/EditBookModal/EditBookModal";
 
 interface Props {
   id: number;
@@ -12,6 +14,7 @@ interface Props {
   description: string;
   date: string;
   onDelete: (id: number) => void;
+  onEdit: (id: number) => void;
 }
 
 const BookForm = ({
@@ -21,9 +24,11 @@ const BookForm = ({
   date,
   id,
   onDelete,
-}: Props) => {
+  onEdit,
+}: Props & { sortField: string; sortOrder: "asc" | "desc" }) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const handleDeleteClick = () => {
     setDeleteModalOpen(true);
@@ -38,9 +43,14 @@ const BookForm = ({
     setDetailsModalOpen(true);
   };
 
+  const handleEditClick = () => {
+    setEditModalOpen(true);
+  };
+
   const handleCloseModals = () => {
     setDeleteModalOpen(false);
     setDetailsModalOpen(false);
+    setEditModalOpen(false);
   };
 
   return (
@@ -60,22 +70,31 @@ const BookForm = ({
           display="flex"
           flexDirection="column"
           height="100%"
-          width="100%"
-          justifyContent="space-evenly"
+          width="85%"
           className="block 3"
         >
-          <Box display="flex" justifyContent="space-around">
+          <Box display="flex" justifyContent="space-between">
             <Typography variant="h5" mt={1}>
               {title}
             </Typography>
 
-            <IconButton aria-label="details" onClick={handleDetailsClick}>
-              <InfoIcon />
-            </IconButton>
+            <Box display="flex">
+              <Typography variant="h5" mt={1}>
+                {date}
+              </Typography>
 
-            <IconButton aria-label="delete" onClick={handleDeleteClick}>
-              <DeleteIcon />
-            </IconButton>
+              <IconButton aria-label="details" onClick={handleDetailsClick}>
+                <InfoIcon />
+              </IconButton>
+
+              <IconButton aria-label="edit" onClick={handleEditClick}>
+                <EditIcon />
+              </IconButton>
+
+              <IconButton aria-label="delete" onClick={handleDeleteClick}>
+                <DeleteIcon />
+              </IconButton>
+            </Box>
           </Box>
         </Box>
       </Grid>
@@ -94,6 +113,14 @@ const BookForm = ({
         author={author}
         description={description}
         date={date}
+      />
+
+      <EditBookModal
+        open={editModalOpen}
+        handleClose={handleCloseModals}
+        bookData={{ id, title, author, description, date }}
+        onSubmit={onEdit}
+        onCancel={handleCloseModals}
       />
     </Box>
   );

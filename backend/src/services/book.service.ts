@@ -26,4 +26,16 @@ export class BookService {
     async deleteBook(id: number, userId: number) {
         return await this.repository.deleteBook(id, userId);
     }
+
+    async updateBook(id: number, bookDto: BookDto): Promise<IBook | null> {
+        const errors = await validate(bookDto, {
+            whitelist: true,
+            validationError: { target: false, value: false }
+        });
+        if (errors.length) throw errors;
+        const existingBook = await this.repository.findOne({ where: { id } });
+        if (!existingBook) return null;
+        Object.assign(existingBook, bookDto);
+        return await this.repository.save(existingBook);
+    }
 }

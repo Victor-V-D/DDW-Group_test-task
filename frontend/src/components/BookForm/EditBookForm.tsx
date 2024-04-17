@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { Box, Button, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import IErrors from "@/interfaces/IErrors";
 import { Link } from "react-router-dom";
@@ -11,21 +11,39 @@ interface State {
 }
 
 interface Props {
-  onSubmit: (data: FormData) => void;
+  id: number;
+  onSubmit: (id: number, data: FormData) => void;
   onCancel: () => void;
   errorFromForm: IErrors[];
+  bookData: {
+    id: number;
+    title: string;
+    author: string;
+    description: string;
+    date: string;
+  };
 }
 
-const AddBookForm = (props: Props) => {
+const EditBookForm = (props: Props) => {
+  const { bookData } = props;
   const [state, setState] = useState<State>({
-    title: "",
-    author: "",
-    description: "",
-    date: "",
+    title: bookData.title,
+    author: bookData.author,
+    description: bookData.description,
+    date: bookData.date,
   });
 
+  useEffect(() => {
+    setState({
+      title: bookData.title,
+      author: bookData.author,
+      description: bookData.description,
+      date: bookData.date,
+    });
+  }, [bookData]);
+
   const getErrorsBy = (name: string) => {
-    const error = props.errorFromForm.find(({ type }) => type === name);
+    const error = props.errorFromForm?.find(({ type }) => type === name);
     return error?.messages.join(",");
   };
 
@@ -37,7 +55,7 @@ const AddBookForm = (props: Props) => {
       formData.append(key, value);
     });
 
-    props.onSubmit(formData);
+    props.onSubmit(props.id, formData);
   };
 
   const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -73,7 +91,6 @@ const AddBookForm = (props: Props) => {
             onChange={inputChangeHandler}
             name="title"
             error={!!getErrorsBy("title")}
-            helperText={getErrorsBy("title")}
           />
         </Grid>
 
@@ -87,7 +104,6 @@ const AddBookForm = (props: Props) => {
             onChange={inputChangeHandler}
             name="author"
             error={!!getErrorsBy("author")}
-            helperText={getErrorsBy("author")}
           />
         </Grid>
 
@@ -101,7 +117,6 @@ const AddBookForm = (props: Props) => {
             onChange={inputChangeHandler}
             name="description"
             error={!!getErrorsBy("description")}
-            helperText={getErrorsBy("description")}
           />
         </Grid>
 
@@ -114,7 +129,7 @@ const AddBookForm = (props: Props) => {
             onChange={handleYearChange}
             fullWidth
             variant="outlined"
-            error={!!getErrorsBy("year")}
+            error={!!getErrorsBy("date")}
           >
             {Array.from({ length: 50 }, (_, index) => new Date().getFullYear() - index).map(year => (
               <MenuItem key={year} value={year}>{year}</MenuItem>
@@ -124,7 +139,7 @@ const AddBookForm = (props: Props) => {
 
         <Grid item xs>
           <Button type="submit" color="primary" variant="contained">
-            Create
+            Update
           </Button>
           <Button component={Link} to={"/"}>Cancel</Button>
         </Grid>
@@ -133,4 +148,4 @@ const AddBookForm = (props: Props) => {
   );
 };
 
-export default AddBookForm;
+export default EditBookForm;

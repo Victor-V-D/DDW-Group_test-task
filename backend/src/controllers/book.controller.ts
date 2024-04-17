@@ -52,4 +52,32 @@ export class BookController {
             res.status(500).send({ message: `Internal server error` });
         }
     };
+
+    updateBook: RequestHandler = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const user = req.app.locals.user as IUser;
+
+            if (!user) {
+                res.status(401).send({ message: `Unauthorized user` });
+                return;
+            }
+
+            const bookDto = plainToInstance(BookDto, req.body, { excludeExtraneousValues: true });
+            const updatedBook = await this.service.updateBook(parseInt(id), bookDto);
+
+            if (!updatedBook) {
+                res.status(404).send({ message: `Book with id ${id} not found` });
+                return;
+            }
+
+            res.send(updatedBook);
+        } catch (error) {
+            if (Array.isArray(error)) {
+                res.status(400).send(formatErrors(error));
+            } else {
+                res.status(500).send({ message: `Internal server error` });
+            }
+        }
+    };
 }

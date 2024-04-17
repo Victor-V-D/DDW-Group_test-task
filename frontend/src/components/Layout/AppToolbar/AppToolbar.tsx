@@ -1,16 +1,29 @@
-import { useAppSelector } from "@/hooks/hooks";
+import { fetchBook } from "@/features/book/bookSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import {
   AppBar,
   Box,
   Button,
   Grid,
+  TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const AppToolbar = () => {
   const { user } = useAppSelector(state => state.auth);
+  const [searchQuery, setSearchQuery] = useState("");
+  const dispatch = useAppDispatch();
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearch = () => {
+    dispatch(fetchBook(searchQuery));
+  };
 
   return (
     <>
@@ -25,6 +38,19 @@ const AppToolbar = () => {
             >
               Library
             </Typography>
+
+            <TextField
+              label="Search"
+              variant="outlined"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
+            />
+
             {user ? (
               <Grid item>
                 <Typography px={1} sx={{ display: "inline", borderRight: "1px solid #fff" }}>

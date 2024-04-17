@@ -19,5 +19,6 @@ export class BookRouter implements IRoute {
         this.router.post('/', authenticateUser, upload.single('image'),
             this.controller.createBook);
         this.router.delete('/:id', authenticateUser, this.controller.deleteBook);
+        this.router.put('/:id', authenticateUser, this.controller.updateBook);
     }
 }

@@ -27,4 +27,12 @@ export class BookRepository extends Repository<IBook> {
         if (selectedBook) await this.delete(id);
         return selectedBook;
     }
+
+    async updateBook(id: number, bookDto: BookDto): Promise<IBook | null> {
+        const existingBook = await this.findOne({ where: { id } });
+        if (!existingBook) return null;
+        const updatedBook = { ...existingBook, ...bookDto };
+        await this.save(updatedBook);
+        return updatedBook;
+    }
 }
