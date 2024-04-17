@@ -56,8 +56,8 @@ export const createBook = createAsyncThunk<
 
 export const deleteBook = createAsyncThunk<
     IBook,
-    number,
-    { state: RootState }
+    FormData,
+    { state: RootState, rejectValue: IErrors[] }
 >(
     "delete/book",
     async (id, { getState }) => {
