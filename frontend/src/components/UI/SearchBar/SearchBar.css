@@ -1,0 +1,32 @@
+.search-bar {
+    height: 10%;
+    display: flex;
+    align-items: center;
+    padding: 18px 20px 18px 40px;
+    border-bottom: 1px solid #31394C;
+}
+
+.search-bar input {
+    width: 100%;
+    font-size: 14px;
+    padding: 8px;
+    margin: 0;
+    border: 0;
+    background: #283046;
+    font-family: Montserrat;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 21px;
+    text-align: left;
+    color: #B9B9C3;
+}
+
+.search-bar input:focus {
+    outline: none;
+}
+
+@media (max-width: 800px) {
+    .search-bar {
+        padding: 9px 10px 9px 20px;
+    }
+}

@@ -1,35 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout/Layout";
+import LoginBuilder from "./containers/AuthenticationBuilder/LoginBuilder/LoginBuilder";
+import RegisterBuilder from "./containers/AuthenticationBuilder/RegisterBuilder/RegisterBuilder";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import CreateBook from "./containers/BookBuilder/CreateBook";
+import BookBuilder from "./containers/BookBuilder/BookBuilder";
+import { useAppSelector } from "./hooks/hooks";
+
+const routes = [
+  {
+    path: "/",
+    element: <BookBuilder />,
+  },
+  {
+    path: "/book",
+    element: <BookBuilder />,
+  },
+  {
+    path: "/user/register",
+    element: <RegisterBuilder />,
+  },
+  {
+    path: "/user/login",
+    element: <LoginBuilder />,
+  },
+];
 
 function App() {
-  const [count, setCount] = useState(0)
+  const user = useAppSelector((state) => state.auth.user);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Routes>
+      <Route element={<Layout />}>
+        {routes.map((route, index) => (
+          <Route key={index} path={route.path} element={route.element} />
+        ))}
+        <Route
+          element={
+            <ProtectedRoute isAllowed={!!user} redirectPath="/user/login" />
+          }
+        >
+          <Route path="/book/create" element={<CreateBook />} />
+        </Route>
+      </Route>
+    </Routes>
+  );
 }
 
-export default App
+export default App;
